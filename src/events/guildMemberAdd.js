@@ -6,7 +6,7 @@ export default {
 
   async execute(member) {
     const welcomeChannelId = '1391992990863593524'; // ✅ Your actual welcome channel ID
-    const autoRoleId = 'YOUR_AUTO_ROLE_ID'; // 🔧 Replace with the ID of the role to assign
+    const autoRoleId = '1391864908861149254'; // 🔧 Replace with the ID of the role to assign
 
     const channel = member.guild.channels.cache.get(welcomeChannelId);
     if (!channel) return;
