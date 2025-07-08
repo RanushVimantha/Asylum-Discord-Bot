@@ -13,13 +13,12 @@ export default {
   async execute(interaction) {
     const msg = interaction.options.getString('message');
 
-    // 🛑 Optional: delete the command reply (if ephemeral is off)
     try {
       await interaction.reply({ content: '✅ Message sent!', ephemeral: true });
       await interaction.channel.send(msg);
-    } catch (err) {
-      console.error('❌ Failed to send message:', err);
-      await interaction.reply({ content: 'Something went wrong.', ephemeral: true });
+    } catch (error) {
+      console.error('❌ Say command error:', error);
+      await interaction.reply({ content: 'There was an error executing the say command.', ephemeral: true });
     }
   }
 };
