@@ -1,4 +1,9 @@
-import { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import {
+  SlashCommandBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle
+} from 'discord.js';
 
 export default {
   data: new SlashCommandBuilder()
@@ -7,7 +12,10 @@ export default {
 
   async execute(interaction) {
     if (!interaction.member.permissions.has('Administrator')) {
-      return interaction.reply({ content: '❌ Only admins can use this command.', ephemeral: true });
+      return interaction.reply({
+        content: '❌ Only admins can use this command.',
+        ephemeral: true
+      });
     }
 
     const row = new ActionRowBuilder().addComponents(
@@ -17,11 +25,13 @@ export default {
         .setStyle(ButtonStyle.Primary)
     );
 
-    await interaction.channel.send({
+    // 🛠️ Reply with the button inside the slash command response
+    await interaction.reply({
       content: '🕵️ Click the button below to submit your anonymous confession.',
-      components: [row]
+      components: [row],
+      ephemeral: false // or true if you want it visible only to user
     });
 
-    await interaction.reply({ content: '✅ Confession button posted successfully.', ephemeral: true });
+    // ❌ DO NOT call interaction.channel.send() and interaction.reply() both
   }
 };

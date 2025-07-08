@@ -15,7 +15,7 @@ export default {
       .setColor(0xff99cc)
       .setTimestamp();
 
-    const confessionChannelId = 'YOUR_CONFESSION_CHANNEL_ID'; // Replace with actual ID
+    const confessionChannelId = '1392113904200712343'; // Replace with actual ID
     const channel = interaction.guild.channels.cache.get(confessionChannelId);
     if (!channel) {
       return interaction.reply({ content: '❌ Confession channel not found.', ephemeral: true });
