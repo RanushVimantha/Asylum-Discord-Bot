@@ -1,0 +1,15 @@
+{
+  "name": "sprint-list-discord-bot",
+  "version": "1.0.0",
+  "description": "Discord bot hosted on Render free tier",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "deploy": "node src/deploy-commands.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1"
+  }
+}
