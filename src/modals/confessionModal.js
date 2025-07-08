@@ -3,6 +3,7 @@ import { getNextConfessionNumber } from '../utils/confessionCounter.js';
 
 export default {
   customId: 'confessionModal',
+
   async execute(interaction) {
     const confessionText = interaction.fields.getTextInputValue('confessionInput');
     const confessionId = getNextConfessionNumber();
@@ -13,24 +14,30 @@ export default {
       .setColor(0x7289DA)
       .setTimestamp();
 
+    const confessionChannelId = 'YOUR_CONFESSION_CHANNEL_ID'; // Replace with actual ID
+    const channel = interaction.guild.channels.cache.get(confessionChannelId);
+    if (!channel) {
+      return interaction.reply({ content: '❌ Confession channel not found.', ephemeral: true });
+    }
+
+    // Send the confession message and capture the sent message
+    const sent = await channel.send({ embeds: [embed] });
+
+    // Add buttons with message ID
     const buttons = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('confessionSubmit')
         .setLabel('Submit a confession!')
         .setStyle(ButtonStyle.Primary),
       new ButtonBuilder()
-        .setCustomId(`reply:${confessionId}`)
+        .setCustomId(`reply:${confessionId}:${sent.id}`)
         .setLabel('Reply')
         .setStyle(ButtonStyle.Secondary)
     );
 
-    const confessionChannelId = '1392113904200712343'; // Replace this
-    const confessionChannel = interaction.guild.channels.cache.get(confessionChannelId);
-    if (!confessionChannel) {
-      return interaction.reply({ content: '❌ Confession channel not found.', ephemeral: true });
-    }
+    // Edit message to add buttons
+    await sent.edit({ embeds: [embed], components: [buttons] });
 
-    await confessionChannel.send({ embeds: [embed], components: [buttons] });
     await interaction.reply({ content: '✅ Confession sent anonymously.', ephemeral: true });
   }
 };

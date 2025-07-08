@@ -1,13 +1,13 @@
 import { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } from 'discord.js';
 
 export default {
-  customId: /^reply:\d+$/, // regex-based match
+  customId: /^reply:\d+:\d+$/, // Format: reply:<confessionId>:<messageId>
 
   async execute(interaction) {
-    const confessionId = interaction.customId.split(':')[1];
+    const [_, confessionId, messageId] = interaction.customId.split(':');
 
     const modal = new ModalBuilder()
-      .setCustomId(`replyModal:${confessionId}`)
+      .setCustomId(`replyModal:${confessionId}:${messageId}`)
       .setTitle(`Reply to Confession #${confessionId}`);
 
     const input = new TextInputBuilder()
