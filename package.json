@@ -1,5 +1,5 @@
 {
-  "name": "sprint-list-discord-bot",
+  "name": "Asylum Discord Bot",
   "version": "1.0.0",
   "description": "Discord bot hosted on Render free tier",
   "main": "src/index.js",
