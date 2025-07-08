@@ -5,12 +5,12 @@ export default {
   once: false,
 
   async execute(member) {
-    const welcomeChannelId = 'YOUR_WELCOME_CHANNEL_ID'; // Replace this with your real channel ID
+    const welcomeChannelId = '1391992990863593524'; // Replace this
     const channel = member.guild.channels.cache.get(welcomeChannelId);
     if (!channel) return;
 
     const embed = new EmbedBuilder()
-      .setColor(0x6b0f1a)
+      .setColor(0x6b0f1a) // Blood red accent
       .setTitle('✴︎ SYSTEM ENTRY: WELCOME TO THE ASYLUM')
       .setDescription(
         `⠀\n` +
