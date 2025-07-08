@@ -5,17 +5,17 @@ export default {
   once: false,
 
   async execute(member) {
-    const welcomeChannelId = '1391992990863593524'; // Replace this
+    const welcomeChannelId = 'YOUR_WELCOME_CHANNEL_ID'; // Replace this with your real channel ID
     const channel = member.guild.channels.cache.get(welcomeChannelId);
     if (!channel) return;
 
     const embed = new EmbedBuilder()
-      .setColor(0x6b0f1a) // Blood red accent
+      .setColor(0x6b0f1a)
       .setTitle('✴︎ SYSTEM ENTRY: WELCOME TO THE ASYLUM')
       .setDescription(
         `⠀\n` +
         `**[ACCESSING FILE: PATIENT_#S-000-??]**\n` +
-        `> NAME: \`<@${member.id}>\`   [REDACTED]\n` +
+        `> NAME: <@${member.id}>   [REDACTED]\n` + // 👈 Now mentions the user
         `> CLASS: THE PSYCHOES\n` +
         `> STATUS: ADMITTED — [CONDITION: Unstable // Internal Screams Detected]\n` +
         `⠀\n` +
