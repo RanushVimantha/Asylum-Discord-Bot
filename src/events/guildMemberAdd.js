@@ -15,7 +15,7 @@ export default {
       .setDescription(
         `⠀\n` +
         `**[ACCESSING FILE: PATIENT_#S-000-??]**\n` +
-        `> NAME: \`${member.id}\`   [REDACTED]\n` +
+        `> NAME: \`<@${member.id}>\`   [REDACTED]\n` +
         `> CLASS: THE PSYCHOES\n` +
         `> STATUS: ADMITTED — [CONDITION: Unstable // Internal Screams Detected]\n` +
         `⠀\n` +
