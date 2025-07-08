@@ -24,7 +24,7 @@ export default {
         .setStyle(ButtonStyle.Secondary)
     );
 
-    const confessionChannelId = 'YOUR_CONFESSION_CHANNEL_ID'; // Replace this
+    const confessionChannelId = '1392113904200712343'; // Replace this
     const confessionChannel = interaction.guild.channels.cache.get(confessionChannelId);
     if (!confessionChannel) {
       return interaction.reply({ content: '❌ Confession channel not found.', ephemeral: true });
