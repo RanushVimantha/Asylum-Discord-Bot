@@ -5,17 +5,33 @@ export default {
   once: false,
 
   async execute(member) {
-    const welcomeChannelId = '1391992990863593524'; // Replace this
+    const welcomeChannelId = '1391992990863593524'; // ✅ Your actual welcome channel ID
+    const autoRoleId = 'YOUR_AUTO_ROLE_ID'; // 🔧 Replace with the ID of the role to assign
+
     const channel = member.guild.channels.cache.get(welcomeChannelId);
     if (!channel) return;
 
+    // ✅ Attempt to assign auto-role
+    try {
+      const role = member.guild.roles.cache.get(autoRoleId);
+      if (role) {
+        await member.roles.add(role);
+        console.log(`🟢 Assigned role "${role.name}" to ${member.user.tag}`);
+      } else {
+        console.warn(`⚠️ Auto-role ID ${autoRoleId} not found in guild "${member.guild.name}"`);
+      }
+    } catch (err) {
+      console.error(`❌ Failed to assign auto-role:`, err);
+    }
+
+    // 🧠 Asylum Welcome Embed
     const embed = new EmbedBuilder()
-      .setColor(0x6b0f1a) // Blood red accent
+      .setColor(0x6b0f1a)
       .setTitle('✴︎ SYSTEM ENTRY: WELCOME TO THE ASYLUM')
       .setDescription(
         `⠀\n` +
         `**[ACCESSING FILE: PATIENT_#S-000-??]**\n` +
-        `> NAME: <@${member.id}>   [REDACTED]\n` + // 👈 Now mentions the user
+        `> NAME: <@${member.id}>   [REDACTED]\n` +
         `> CLASS: THE PSYCHOES\n` +
         `> STATUS: ADMITTED — [CONDITION: Unstable // Internal Screams Detected]\n` +
         `⠀\n` +
