@@ -4,6 +4,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { startKeepAlive } from './keepalive.js';
+import mongoose from 'mongoose';
+import { startReminderScheduler } from './utils/reminderScheduler.js';
 
 dotenv.config();
 startKeepAlive();
@@ -57,8 +59,21 @@ for (const file of fs.readdirSync(modalsPath)) {
   client.modals.set(modal.default.customId, modal.default);
 }
 
-client.once('ready', () => {
+client.once('ready', async () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
+
+  // Connect to MongoDB and start reminder scheduler
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    console.log('✅ Connected to MongoDB');
+
+    startReminderScheduler(client);
+  } catch (error) {
+    console.error('❌ MongoDB connection error:', error);
+  }
 });
 
 client.login(process.env.DISCORD_TOKEN);
