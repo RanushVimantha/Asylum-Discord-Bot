@@ -13,7 +13,7 @@ export default {
       .setColor(0xff99cc)
       .setTimestamp();
 
-    const replyChannelId = 'YOUR_CONFESSION_CHANNEL_ID'; // same channel as confessions
+    const replyChannelId = '1392113904200712343'; // same channel as confessions
     const channel = interaction.guild.channels.cache.get(replyChannelId);
     if (!channel) {
       return interaction.reply({ content: 'Reply channel not found.', ephemeral: true });
