@@ -36,7 +36,7 @@ for (const file of fs.readdirSync(commandsPath)) {
 
 // Events
 const eventsPath = path.join(__dirname, 'events');
-for (const file of fs.readdirSync(eventsPath)) {
+for (const file of fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'))) {
   const event = await import(`./events/${file}`);
   if (event.default.once) {
     client.once(event.default.name, (...args) => event.default.execute(...args, client));
@@ -44,6 +44,7 @@ for (const file of fs.readdirSync(eventsPath)) {
     client.on(event.default.name, (...args) => event.default.execute(...args, client));
   }
 }
+
 
 // Buttons
 const buttonsPath = path.join(__dirname, 'buttons');
