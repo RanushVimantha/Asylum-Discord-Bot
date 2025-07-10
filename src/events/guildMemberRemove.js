@@ -3,19 +3,45 @@ import { EmbedBuilder } from 'discord.js';
 export default {
   name: 'guildMemberRemove',
   once: false,
-  async execute(member, client) {
-    const goodbyeChannelId = '1392023742175248482'; // Change this to your actual channel ID
+
+  async execute(member) {
+    const goodbyeChannelId = '1392023742175248482'; // ✅ Your actual leave channel ID
     const channel = member.guild.channels.cache.get(goodbyeChannelId);
     if (!channel) return;
 
+    // Optional: Debug log
+    console.log(`[EVENT] guildMemberRemove triggered for ${member.user.tag} (${member.id})`);
+
     const embed = new EmbedBuilder()
-      .setTitle(`👋 Goodbye, ${member.user.username}`)
-      .setDescription(`We're sad to see you go from **${member.guild.name}**.`)
-      .setColor(0xFF0000)
+      .setColor(0x910000)
+      .setTitle('✴︎ [SYS//DISCHARGE_LOG]:: **℘ąɬıɛŋɬ_#ʂ-000-??**')
+      .setDescription(
+        `**ηαмє:** <@${member.id}> [█̶R̷E̶D̷A̸C̴T̷E̷D̷]  \n` +
+        `**¢ℓαѕѕ:** тнє ρѕу¢нσєѕ  \n` +
+        `**ѕтαтυѕ:** ∂ι𝕤𝔠𝓱𝕒𝕣g𝕖∂... ?  \n` +
+        `**¢ση∂ιтιση:** 𝙀𝙍𝙍𝙊𝙍: [𝗨𝗡𝗞𝗡𝗢𝗪𝗡_𝗘𝗫𝗜𝗧_𝗩𝗘𝗖𝗧𝗢𝗥]  \n` +
+        `**яє¢σммєη∂є∂ α¢тιση:** ▓▓▓▓▓\n\n` +
+        `⤷[LOG OVERRIDE: **asymlogic.exe**]\n\n` +
+        `> "Stability achieved. The patient has shown sufficient progress for reintroduction to society."\n` +
+        `> "All monitoring protocols terminated successfully."\n\n` +
+        `**⛓ ιηтєяηαℓ αℓєят:**\n` +
+        `> [!] ⚠ тαяgєт єѕ¢αρє∂\n` +
+        `> [!] ⚠ ѕуѕтєм вяєα¢н ∂єтє¢тє∂\n` +
+        `> [!] ⚠ яєαℓιту ¢σмρяσмιѕє∂\n\n` +
+        `||→ 𝖱౿⍵𝗋ꪱᜒ𝗍ꪱᜒ𐓣𝗀 ρυᑲᥣꪱᜒɕ ᥣ𝗈𝗀…||\n\n` +
+        '`⤷ Pαƚƈԋ ԃҽρʅσყҽԃ.\n' +
+        '⤷ Tɾυƚԋ ʅσσρ ʂυρρɾҽʂʂҽԃ.\n' +
+        '⤷ Mҽɱσɾყ ϝσɠ... ιɳιƚιαʅιȥҽԃ.`\n\n' +
+        `----- [ 𝐃𝐫.𝐁𝐨𝐭𝐅𝐫𝐚𝐠'𝒔 𝐬𝐭𝐚𝐭𝐞𝐦𝐞𝐧𝐭 ]\n` +
+        `**(っ◔◡◔)っ** ♥ 𝘞𝘦 𝘸𝘪𝘴𝘩 𝘵𝘩𝘦𝘮 𝘵𝘩𝘦 𝘣𝘦𝘴𝘵 𝘰𝘧 𝘭𝘶𝘤𝘬 ♥ \n\n` +
+        `𝕯𝖔 𝖓𝖔𝖙 𝖇𝖊 𝖈𝖚𝖗𝖎𝖔𝖚𝖘.\n` +
+        `𝕯𝖔 𝖓𝖔𝖙 𝖆𝖙𝖙𝖊𝖒𝖕𝖙 𝖈𝖔𝖓𝖙𝖆𝖈𝖙.\n` +
+        `𝕽𝖊𝖙𝖚𝖗𝖓 𝖙𝖔 𝖞𝖔𝖚𝖗 𝖕𝖗𝖊𝖘𝖈𝖗𝖎𝖇𝖊𝖉 𝖗𝖔𝖚𝖙𝖎𝖓𝖊𝖘, 𝖉𝖊𝖆𝖗 𝖕𝖆𝖙𝖎𝖊𝖓𝖙𝖘.`
+      )
       .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
-      .setFooter({ text: `User ID: ${member.id}` })
+      .setFooter({ text: 'ASYMLOGIC EXIT NODE — discharge complete' })
       .setTimestamp();
 
-    channel.send({ embeds: [embed] });
-  },
+    await channel.send({ embeds: [embed] });
+  }
 };
