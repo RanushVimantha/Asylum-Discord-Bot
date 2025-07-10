@@ -1,89 +1,46 @@
-import {
-  SlashCommandBuilder,
-  PermissionFlagsBits
-} from 'discord.js';
-import { logModEvent } from '../../src/utils/logModEvent.js';
+import { SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
+import { logModEvent } from '#utils/logModEvent.js';
 
-const timeUnits = {
-  s: 1000,
-  m: 1000 * 60,
-  h: 1000 * 60 * 60,
-  d: 1000 * 60 * 60 * 24
-};
-
-function parseDuration(input) {
+const timeUnits = { s: 1000, m: 60000, h: 3600000, d: 86400000 };
+const parseDuration = (input) => {
   const match = /^(\d+)(s|m|h|d)$/.exec(input);
   if (!match) return null;
-
-  const [, num, unit] = match;
-  return parseInt(num) * timeUnits[unit];
-}
+  return parseInt(match[1]) * timeUnits[match[2]];
+};
 
 export default {
   data: new SlashCommandBuilder()
     .setName('timeout')
-    .setDescription('Temporarily time out a member (mute + block)')
+    .setDescription('Temporarily timeout a member')
     .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
-    .addUserOption(option =>
-      option.setName('target')
-        .setDescription('User to timeout')
-        .setRequired(true)
-    )
-    .addStringOption(option =>
-      option.setName('duration')
-        .setDescription('Duration (e.g., 10m, 1h, 2d)')
-        .setRequired(true)
-    )
-    .addStringOption(option =>
-      option.setName('reason')
-        .setDescription('Reason for timeout')
-        .setRequired(false)
-    ),
+    .addUserOption(opt => opt.setName('target').setDescription('User to timeout').setRequired(true))
+    .addStringOption(opt => opt.setName('duration').setDescription('e.g. 10m, 2h').setRequired(true))
+    .addStringOption(opt => opt.setName('reason').setDescription('Reason').setRequired(false)),
 
   async execute(interaction) {
-    const targetUser = interaction.options.getUser('target');
+    const target = interaction.options.getUser('target');
     const durationStr = interaction.options.getString('duration');
     const reason = interaction.options.getString('reason') || 'No reason provided';
 
     const durationMs = parseDuration(durationStr);
-
-    if (!durationMs || durationMs < 5000 || durationMs > 28 * 24 * 60 * 60 * 1000) {
-      return interaction.reply({
-        content: '❌ Invalid duration. Use formats like `10m`, `2h`, `1d` (max 28 days).',
-        ephemeral: true
-      });
+    if (!durationMs || durationMs < 5000 || durationMs > 2419200000) {
+      return interaction.reply({ content: '❌ Invalid duration. Use 10m, 1h, 2d (max 28 days).', ephemeral: true });
     }
 
-    const member = await interaction.guild.members.fetch(targetUser.id).catch(() => null);
-
-    if (!member) {
-      return interaction.reply({ content: '❌ Member not found.', ephemeral: true });
+    const member = await interaction.guild.members.fetch(target.id).catch(() => null);
+    if (!member || !member.moderatable) {
+      return interaction.reply({ content: '❌ Cannot timeout this user.', ephemeral: true });
     }
 
-    if (!member.moderatable) {
-      return interaction.reply({
-        content: '❌ I cannot timeout this user. My role must be higher and I need `Moderate Members` permission.',
-        ephemeral: true
-      });
-    }
+    await member.timeout(durationMs, reason);
+    await interaction.reply({ content: `🔇 <@${target.id}> timed out for ${durationStr}.\n📝 ${reason}` });
 
-    try {
-      await member.timeout(durationMs, reason);
-      await interaction.reply({
-        content: `🔇 <@${member.id}> has been timed out for **${durationStr}**.\n📝 Reason: ${reason}`
-      });
-
-      // ✅ Log moderation action
-      await logModEvent(interaction.guild, 'modAction', {
-        action: 'Timeout',
-        target: targetUser,
-        moderator: interaction.user,
-        reason,
-        duration: durationStr
-      });
-    } catch (err) {
-      console.error('Timeout error:', err);
-      await interaction.reply({ content: '❌ Failed to timeout the member.', ephemeral: true });
-    }
+    await logModEvent(interaction.guild, 'modAction', {
+      action: 'Timeout',
+      target,
+      moderator: interaction.user,
+      reason,
+      duration: durationStr
+    });
   }
 };

@@ -1,5 +1,5 @@
 // src/events/messageUpdate.js
-import { logModEvent } from '../../src/utils/logModEvent.js';
+import { logModEvent } from '../utils/logModEvent.js';
 
 export default {
   name: 'messageUpdate',

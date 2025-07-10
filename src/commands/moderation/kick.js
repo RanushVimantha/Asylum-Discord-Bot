@@ -1,16 +1,16 @@
 import { SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
-import { logModEvent } from '../utils/logModEvent.js';
+import { logModEvent } from '#utils/logModEvent.js';
 
 export default {
   data: new SlashCommandBuilder()
     .setName('kick')
     .setDescription('Kick a member from the server')
     .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
-    .addUserOption(option =>
-      option.setName('target').setDescription('The member to kick').setRequired(true)
+    .addUserOption(opt =>
+      opt.setName('target').setDescription('The member to kick').setRequired(true)
     )
-    .addStringOption(option =>
-      option.setName('reason').setDescription('Reason for the kick').setRequired(false)
+    .addStringOption(opt =>
+      opt.setName('reason').setDescription('Reason for the kick').setRequired(false)
     ),
 
   async execute(interaction) {
@@ -18,7 +18,7 @@ export default {
     const reason = interaction.options.getString('reason') || 'No reason provided';
 
     const member = await interaction.guild.members.fetch(target.id).catch(() => null);
-    if (!member) return interaction.reply({ content: '❌ Could not find that user.', ephemeral: true });
+    if (!member) return interaction.reply({ content: '❌ User not found.', ephemeral: true });
     if (!member.kickable) return interaction.reply({ content: '❌ I cannot kick this user.', ephemeral: true });
 
     await member.kick(reason);

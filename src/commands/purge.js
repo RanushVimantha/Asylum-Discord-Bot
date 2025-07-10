@@ -1,10 +1,9 @@
-// src/commands/moderation/purge.js
 import {
   SlashCommandBuilder,
   PermissionFlagsBits,
   ChannelType
 } from 'discord.js';
-import { logModEvent } from '../../src/utils/logModEvent.js';
+import { logModEvent } from '#utils/logModEvent.js';
 
 export default {
   data: new SlashCommandBuilder()

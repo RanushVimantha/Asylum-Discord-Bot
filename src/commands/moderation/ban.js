@@ -1,16 +1,16 @@
 import { SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
-import { logModEvent } from '../utils/logModEvent.js';
+import { logModEvent } from '#utils/logModEvent.js';
 
 export default {
   data: new SlashCommandBuilder()
     .setName('ban')
     .setDescription('Ban a member from the server')
     .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
-    .addUserOption(option =>
-      option.setName('target').setDescription('The member to ban').setRequired(true)
+    .addUserOption(opt =>
+      opt.setName('target').setDescription('The member to ban').setRequired(true)
     )
-    .addStringOption(option =>
-      option.setName('reason').setDescription('Reason for the ban').setRequired(false)
+    .addStringOption(opt =>
+      opt.setName('reason').setDescription('Reason for the ban').setRequired(false)
     ),
 
   async execute(interaction) {
@@ -18,7 +18,7 @@ export default {
     const reason = interaction.options.getString('reason') || 'No reason provided';
 
     const member = await interaction.guild.members.fetch(target.id).catch(() => null);
-    if (!member) return interaction.reply({ content: '❌ Could not find that user.', ephemeral: true });
+    if (!member) return interaction.reply({ content: '❌ User not found.', ephemeral: true });
     if (!member.bannable) return interaction.reply({ content: '❌ I cannot ban this user.', ephemeral: true });
 
     await member.ban({ reason });

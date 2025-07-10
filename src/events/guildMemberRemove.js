@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-import { logModEvent } from '../../src/utils/logModEvent.js';
+import { logModEvent } from '../utils/logModEvent.js';
 
 export default {
   name: 'guildMemberRemove',

@@ -8,6 +8,9 @@
     "start": "node src/index.js",
     "deploy": "node src/deploy-commands.js"
   },
+  "imports": {
+    "#utils/*": "./src/utils/*"
+  },
   "dependencies": {
     "discord.js": "^14.14.1",
     "dotenv": "^16.3.1",
