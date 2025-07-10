@@ -1,7 +1,6 @@
 import {
   SlashCommandBuilder,
-  PermissionFlagsBits,
-  time
+  PermissionFlagsBits
 } from 'discord.js';
 
 const timeUnits = {
@@ -21,12 +20,12 @@ function parseDuration(input) {
 
 export default {
   data: new SlashCommandBuilder()
-    .setName('mute')
-    .setDescription('Temporarily mute (timeout) a member')
+    .setName('timeout') // ⬅️ renamed
+    .setDescription('Temporarily time out a member (mute + block)')
     .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addUserOption(option =>
       option.setName('target')
-        .setDescription('User to mute')
+        .setDescription('User to timeout')
         .setRequired(true)
     )
     .addStringOption(option =>
@@ -36,7 +35,7 @@ export default {
     )
     .addStringOption(option =>
       option.setName('reason')
-        .setDescription('Reason for mute')
+        .setDescription('Reason for timeout')
         .setRequired(false)
     ),
 
@@ -61,17 +60,20 @@ export default {
     }
 
     if (!member.moderatable) {
-      return interaction.reply({ content: '❌ I cannot mute this user. Check role hierarchy or permissions.', ephemeral: true });
+      return interaction.reply({
+        content: '❌ I cannot timeout this user. My role must be higher and I need `Moderate Members` permission.',
+        ephemeral: true
+      });
     }
 
     try {
       await member.timeout(durationMs, reason);
       await interaction.reply({
-        content: `🔇 <@${member.id}> has been muted for **${durationStr}**.\n📝 Reason: ${reason}`
+        content: `🔇 <@${member.id}> has been timed out for **${durationStr}**.\n📝 Reason: ${reason}`
       });
     } catch (err) {
-      console.error('Mute error:', err);
-      await interaction.reply({ content: '❌ Failed to mute the member.', ephemeral: true });
+      console.error('Timeout error:', err);
+      await interaction.reply({ content: '❌ Failed to timeout the member.', ephemeral: true });
     }
   }
 };
