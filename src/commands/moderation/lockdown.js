@@ -16,6 +16,8 @@ export default {
 
   async execute(interaction) {
     const MOD_ROLE_ID = '1392824426357067806'; // 🔧 Replace with your mod role ID
+    const ANNOUNCE_CHANNEL_ID = '1367751287956967454'; // 🔧 Replace with your announcement channel ID
+
     if (!interaction.member.roles.cache.has(MOD_ROLE_ID)) {
       return interaction.reply({ content: '❌ You do not have permission to use this command.', ephemeral: true });
     }
@@ -23,16 +25,18 @@ export default {
     const action = interaction.options.getString('action');
     const everyone = interaction.guild.roles.everyone;
 
-    const channels = interaction.guild.channels.cache.filter(c =>
-      c.type === ChannelType.GuildText || c.type === ChannelType.GuildVoice
+    const allChannels = interaction.guild.channels.cache;
+    const textAndVoiceChannels = allChannels.filter(
+      c => c.type === ChannelType.GuildText || c.type === ChannelType.GuildVoice
     );
 
     let count = 0;
 
-    // ✅ Defer the reply to prevent Unknown Interaction error
+    // ✅ Defer reply to prevent timeout
     await interaction.deferReply({ ephemeral: true });
 
-    for (const channel of channels.values()) {
+    // 🔒 Apply permission changes
+    for (const channel of textAndVoiceChannels.values()) {
       try {
         const perms =
           channel.type === ChannelType.GuildVoice
@@ -46,10 +50,36 @@ export default {
       }
     }
 
+    // ⛔ Disconnect all voice users if action is lock
+    if (action === 'lock') {
+      const voiceChannels = allChannels.filter(c => c.type === ChannelType.GuildVoice);
+      for (const vc of voiceChannels.values()) {
+        for (const [_, member] of vc.members) {
+          try {
+            await member.voice.disconnect('Lockdown in effect');
+          } catch (err) {
+            console.warn(`⚠️ Could not disconnect ${member.user.tag} from ${vc.name}`);
+          }
+        }
+      }
+    }
+
+    // 📣 Send announcement message
+    const announceChannel = interaction.guild.channels.cache.get(ANNOUNCE_CHANNEL_ID);
+    if (announceChannel && announceChannel.isTextBased()) {
+      const msg =
+        action === 'lock'
+          ? '🔒 **[SYSTEM ALERT]**: The server has been placed under lockdown. All channels have been locked for your safety. Remain calm and await further instructions.'
+          : '🔓 **[SYSTEM NOTICE]**: The lockdown has been lifted. Normal operations have resumed. Thank you for your patience.';
+
+      await announceChannel.send(msg);
+    }
+
+    // ✅ Final reply
     await interaction.editReply(
       action === 'lock'
-        ? `🚨 Server-wide lockdown initiated.\n🔒 Locked ${count} channels (text + voice).`
-        : `✅ Lockdown lifted.\n🔓 Unlocked ${count} channels (text + voice).`
+        ? `🚨 Lockdown initiated. 🔒 Locked ${count} channels and disconnected all voice users.`
+        : `✅ Lockdown lifted. 🔓 Unlocked ${count} channels.`
     );
   }
 };
