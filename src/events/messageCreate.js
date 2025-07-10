@@ -6,21 +6,29 @@ export default {
     // Ignore bot messages
     if (message.author.bot) return;
 
-    const linksChannelId = '1391860100662300803'; // 🔁 Replace this
-
+    const linksChannelId = 'YOUR_LINKS_CHANNEL_ID'; // 🔁 Replace this
+    const channelId = message.channel.id;
     const content = message.content.toLowerCase();
+
     const hasLink = /(https?:\/\/[^\s]+)/.test(content);
-    const isGif = /(https?:\/\/[^\s]+\.(gif|gifv))/.test(content);
     const isDiscordInvite = /(discord\.gg\/|discord\.com\/invite\/)/.test(content);
 
-    // 1. Delete all discord invite links
+    const isGifLink = /(https?:\/\/[^\s]+\.(gif|gifv))/.test(content);
+    const isGifHost = /(tenor\.com|giphy\.com|media\.discordapp\.net|cdn\.discordapp\.com)/.test(content);
+
+    // 1. Always delete discord invites
     if (isDiscordInvite) {
       await message.delete().catch(() => {});
       return;
     }
 
-    // 2. Redirect normal links not in #links channel (unless gif)
-    if (hasLink && !isGif && message.channel.id !== linksChannelId) {
+    // 2. If message is a GIF (allowed), skip
+    if ((isGifLink || isGifHost) && !isDiscordInvite) {
+      return;
+    }
+
+    // 3. If it's a non-GIF link and not in #links → delete + redirect
+    if (hasLink && channelId !== linksChannelId) {
       try {
         await message.delete();
 
@@ -31,7 +39,7 @@ export default {
           });
         }
       } catch (err) {
-        console.error(`❌ Failed to handle link message:`, err);
+        console.error(`❌ Link handler error:`, err);
       }
     }
   }
