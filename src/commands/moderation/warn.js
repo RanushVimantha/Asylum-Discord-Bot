@@ -52,7 +52,7 @@ export default {
     const sevenDays = 7 * 24 * 60 * 60 * 1000;
 
     if (warnCount >= 3) {
-      const sedatedRoleId = '1392839061215117493'; // 🔧 Replace with your real Sedated role ID
+      const sedatedRoleId = '1392824426357067806'; // 🔧 Replace with your real Sedated role ID
       const sedatedRole = interaction.guild.roles.cache.get(sedatedRoleId);
 
       try {

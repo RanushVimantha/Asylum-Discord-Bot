@@ -28,7 +28,7 @@ export default {
     const channel = interaction.options.getChannel('channel');
 
     // 🔐 Replace with your actual role ID
-    const requiredRoleId = '1392821561223806986';
+    const requiredRoleId = '1392824426357067806';
 
     // 🔒 Check if user has the required role
     if (!interaction.member.roles.cache.has(requiredRoleId)) {

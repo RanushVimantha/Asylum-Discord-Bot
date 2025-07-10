@@ -3,10 +3,10 @@ import { SlashCommandBuilder, ChannelType } from 'discord.js';
 export default {
   data: new SlashCommandBuilder()
     .setName('lockdown')
-    .setDescription('Lock or unlock all text channels in the server')
+    .setDescription('Lock or unlock ALL text and voice channels for @everyone')
     .addStringOption(option =>
       option.setName('action')
-        .setDescription('Lock or unlock')
+        .setDescription('Choose to lock or unlock all channels')
         .setRequired(true)
         .addChoices(
           { name: 'lock', value: 'lock' },
@@ -15,7 +15,7 @@ export default {
     ),
 
   async execute(interaction) {
-    const MOD_ROLE_ID = '139000000000000000'; // 🔧 Replace with your moderator role ID
+    const MOD_ROLE_ID = '1392824426357067806'; // 🔧 Replace with your mod role ID
     if (!interaction.member.roles.cache.has(MOD_ROLE_ID)) {
       return interaction.reply({ content: '❌ You do not have permission to use this command.', ephemeral: true });
     }
@@ -23,25 +23,30 @@ export default {
     const action = interaction.options.getString('action');
     const everyone = interaction.guild.roles.everyone;
 
-    const channels = interaction.guild.channels.cache.filter(c => c.type === ChannelType.GuildText);
+    const channels = interaction.guild.channels.cache.filter(c =>
+      c.type === ChannelType.GuildText || c.type === ChannelType.GuildVoice
+    );
 
-    let count = 0;
+    let changed = 0;
 
     for (const channel of channels.values()) {
       try {
-        await channel.permissionOverwrites.edit(everyone, {
-          SendMessages: action === 'lock' ? false : null
-        });
-        count++;
+        const perms =
+          channel.type === ChannelType.GuildVoice
+            ? { Connect: action === 'lock' ? false : null }
+            : { SendMessages: action === 'lock' ? false : null };
+
+        await channel.permissionOverwrites.edit(everyone, perms);
+        changed++;
       } catch (err) {
-        console.warn(`Could not modify permissions for ${channel.name}`);
+        console.warn(`⚠️ Could not modify ${channel.name}`);
       }
     }
 
     await interaction.reply(
       action === 'lock'
-        ? `🚨 Lockdown initiated. 🔒 Locked ${count} channels.`
-        : `✅ Lockdown lifted. 🔓 Unlocked ${count} channels.`
+        ? `🚨 Server-wide lockdown initiated.\n🔒 Locked ${changed} channels (text & voice).`
+        : `✅ Lockdown lifted.\n🔓 Unlocked ${changed} channels (text & voice).`
     );
   }
 };
