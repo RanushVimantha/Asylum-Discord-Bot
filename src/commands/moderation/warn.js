@@ -4,33 +4,33 @@ import Warning from '../../models/warnSchema.js';
 export default {
   data: new SlashCommandBuilder()
     .setName('warn')
-    .setDescription('Issue a warning to a user (3 warnings = 7-day timeout)')
+    .setDescription('Issue a warning to a user (3 warnings = timeout + Sedated role)')
     .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addUserOption(option =>
       option.setName('target')
-        .setDescription('User to warn')
+        .setDescription('The user to warn')
         .setRequired(true)
     )
     .addStringOption(option =>
       option.setName('reason')
-        .setDescription('Reason for warning')
+        .setDescription('Reason for the warning')
         .setRequired(false)
     ),
 
   async execute(interaction) {
     const user = interaction.options.getUser('target');
     const reason = interaction.options.getString('reason') || 'No reason provided';
-
     const member = await interaction.guild.members.fetch(user.id).catch(() => null);
-    if (!member) return interaction.reply({ content: '❌ Member not found.', ephemeral: true });
+
+    if (!member) {
+      return interaction.reply({ content: '❌ Could not find the user.', ephemeral: true });
+    }
 
     if (!member.moderatable) {
       return interaction.reply({ content: '❌ I cannot warn this user. Check role hierarchy.', ephemeral: true });
     }
 
-    const sevenDays = 7 * 24 * 60 * 60 * 1000;
-
-    // Get or create warning data
+    // Load or create warning record
     let data = await Warning.findOne({ guildId: interaction.guild.id, userId: user.id });
     if (!data) {
       data = new Warning({
@@ -48,25 +48,52 @@ export default {
 
     await data.save();
 
-    const count = data.warnings.length;
+    const warnCount = data.warnings.length;
+    const sevenDays = 7 * 24 * 60 * 60 * 1000;
 
-    // Respond based on warning count
-    if (count >= 3) {
+    if (warnCount >= 3) {
+      const sedatedRoleId = '1392839061215117493'; // 🔧 Replace with your real Sedated role ID
+      const sedatedRole = interaction.guild.roles.cache.get(sedatedRoleId);
+
       try {
-        await member.timeout(sevenDays, 'Auto-timeout: reached 3 warnings');
+        // Timeout the member
+        await member.timeout(sevenDays, 'Auto-timeout after 3 warnings');
+
+        // Remove all roles except @everyone
+        const rolesToRemove = member.roles.cache.filter(r => r.name !== '@everyone');
+        await member.roles.remove(rolesToRemove);
+
+        // Assign Sedated role
+        if (sedatedRole) {
+          await member.roles.add(sedatedRole);
+        }
+
+        // Schedule automatic removal of the Sedated role after 7 days
+        setTimeout(async () => {
+          try {
+            const refreshedMember = await interaction.guild.members.fetch(user.id);
+            if (refreshedMember.roles.cache.has(sedatedRoleId)) {
+              await refreshedMember.roles.remove(sedatedRoleId);
+              console.log(`🧠 Sedated role removed from ${refreshedMember.user.tag} after timeout.`);
+            }
+          } catch (err) {
+            console.error('Failed to remove Sedated role after timeout:', err);
+          }
+        }, sevenDays);
+
         await interaction.reply({
-          content: `⚠️ <@${user.id}> has been warned **(3/3)** and was automatically timed out for **7 days**.\nReason: ${reason}`
+          content: `⚠️ <@${user.id}> has received their **third warning (3/3)**.\n🔇 Timed out for 7 days.\n🧬 All roles removed and assigned \`Sedated\` role.\n📝 Reason: ${reason}`
         });
       } catch (err) {
-        console.error('Timeout failed:', err);
+        console.error('Punishment error:', err);
         await interaction.reply({
-          content: `⚠️ <@${user.id}> reached **3 warnings**, but I failed to timeout them.\nReason: ${reason}`,
+          content: `❌ Failed to apply punishment to <@${user.id}>.`,
           ephemeral: true
         });
       }
     } else {
       await interaction.reply({
-        content: `⚠️ <@${user.id}> has been warned **(${count}/3)**.\nReason: ${reason}`
+        content: `⚠️ <@${user.id}> has been warned **(${warnCount}/3)**.\n📝 Reason: ${reason}`
       });
     }
   }
