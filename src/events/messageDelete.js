@@ -1,5 +1,5 @@
 // src/events/messageDelete.js
-import { logModEvent } from '../utils/logModEvent.js';
+import { logModEvent } from '../../src/utils/logModEvent.js';
 
 export default {
   name: 'messageDelete',

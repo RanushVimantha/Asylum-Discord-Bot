@@ -2,7 +2,7 @@ import {
   SlashCommandBuilder,
   PermissionFlagsBits
 } from 'discord.js';
-import { logModEvent } from '../../utils/logModEvent.js';
+import { logModEvent } from '../../src/utils/logModEvent.js';
 
 const timeUnits = {
   s: 1000,

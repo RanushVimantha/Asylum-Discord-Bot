@@ -1,6 +1,6 @@
 // src/commands/moderation/lockdown.js
 import { SlashCommandBuilder, ChannelType } from 'discord.js';
-import { logModEvent } from '../../utils/logModEvent.js';
+import { logModEvent } from '../../src/utils/logModEvent.js';
 
 export default {
   data: new SlashCommandBuilder()
