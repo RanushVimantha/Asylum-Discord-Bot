@@ -1,14 +1,15 @@
+// src/commands/moderation/purge.js
 import {
   SlashCommandBuilder,
   PermissionFlagsBits,
   ChannelType
 } from 'discord.js';
+import { logModEvent } from '../../utils/logModEvent.js';
 
 export default {
   data: new SlashCommandBuilder()
     .setName('purge')
     .setDescription('Bulk delete up to 2000 messages from a text channel')
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
     .addIntegerOption(option =>
       option.setName('amount')
         .setDescription('How many messages to delete (max 2000)')
@@ -27,18 +28,15 @@ export default {
     const amount = interaction.options.getInteger('amount');
     const channel = interaction.options.getChannel('channel');
 
-    // 🔐 Replace with your actual role ID
-    const requiredRoleId = '1392824426357067806';
+    const MOD_ROLE_ID = '1392824426357067806';
 
-    // 🔒 Check if user has the required role
-    if (!interaction.member.roles.cache.has(requiredRoleId)) {
+    if (!interaction.member.roles.cache.has(MOD_ROLE_ID)) {
       return interaction.reply({
-        content: '🚫 You are not authorized to use this command. This action requires a special role.',
+        content: '🚫 You are not authorized to use this command. This action requires a moderator role.',
         ephemeral: true
       });
     }
 
-    // 🔒 Check bot permission in the target channel
     if (!channel.permissionsFor(interaction.guild.members.me).has(PermissionFlagsBits.ManageMessages)) {
       return interaction.reply({
         content: `❌ I don’t have permission to manage messages in ${channel}.`,
@@ -77,6 +75,13 @@ export default {
 
     await interaction.editReply({
       content: `✅ Deleted **${totalDeleted}** messages in ${channel}.`
+    });
+
+    // ✅ Log purge action
+    await logModEvent(interaction.guild, 'modAction', {
+      action: 'Message Purge',
+      moderator: interaction.user,
+      reason: `Deleted ${totalDeleted} messages in #${channel.name}`
     });
   }
 };

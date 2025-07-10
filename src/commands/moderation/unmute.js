@@ -1,7 +1,9 @@
+// src/commands/moderation/unmute.js
 import {
   SlashCommandBuilder,
   PermissionFlagsBits
 } from 'discord.js';
+import { logModEvent } from '../../utils/logModEvent.js';
 
 export default {
   data: new SlashCommandBuilder()
@@ -39,9 +41,19 @@ export default {
 
     try {
       await member.timeout(null, reason); // Remove timeout
+
       await interaction.reply({
         content: `🔊 <@${member.id}> has been unmuted.\n📝 Reason: ${reason}`
       });
+
+      // ✅ Log moderation action
+      await logModEvent(interaction.guild, 'modAction', {
+        action: 'Unmute',
+        target: targetUser,
+        moderator: interaction.user,
+        reason
+      });
+
     } catch (err) {
       console.error('Unmute error:', err);
       await interaction.reply({ content: '❌ Failed to unmute the member.', ephemeral: true });

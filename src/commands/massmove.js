@@ -1,10 +1,11 @@
-import { SlashCommandBuilder, PermissionFlagsBits, ChannelType } from 'discord.js';
+// src/commands/moderation/massmove.js
+import { SlashCommandBuilder, ChannelType } from 'discord.js';
+import { logModEvent } from '../../utils/logModEvent.js';
 
 export default {
   data: new SlashCommandBuilder()
     .setName('massmove')
     .setDescription('Move all users from one voice channel to another')
-    .setDefaultMemberPermissions(PermissionFlagsBits.MoveMembers)
     .addChannelOption(option =>
       option.setName('from')
         .setDescription('The voice channel to move users from')
@@ -19,6 +20,15 @@ export default {
     ),
 
   async execute(interaction) {
+    const MOD_ROLE_ID = '1392824426357067806';
+
+    if (!interaction.member.roles.cache.has(MOD_ROLE_ID)) {
+      return interaction.reply({
+        content: '🚫 You are not authorized to use this command. This action requires a moderator role.',
+        ephemeral: true
+      });
+    }
+
     const fromChannel = interaction.options.getChannel('from');
     const toChannel = interaction.options.getChannel('to');
 
@@ -32,7 +42,7 @@ export default {
       return interaction.reply({ content: `⚠️ No users are in ${fromChannel.name}.`, ephemeral: true });
     }
 
-    for (const [memberId, member] of membersToMove) {
+    for (const [, member] of membersToMove) {
       try {
         await member.voice.setChannel(toChannel);
       } catch (err) {
@@ -43,6 +53,13 @@ export default {
     await interaction.reply({
       content: `✅ Moved **${membersToMove.size}** users from **${fromChannel.name}** to **${toChannel.name}**.`,
       ephemeral: true
+    });
+
+    // ✅ Log the mass move
+    await logModEvent(interaction.guild, 'modAction', {
+      action: 'Mass Move',
+      moderator: interaction.user,
+      reason: `Moved ${membersToMove.size} users from ${fromChannel.name} to ${toChannel.name}`
     });
   }
 };

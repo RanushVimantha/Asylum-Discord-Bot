@@ -1,4 +1,6 @@
+// src/commands/moderation/lockdown.js
 import { SlashCommandBuilder, ChannelType } from 'discord.js';
+import { logModEvent } from '../../utils/logModEvent.js';
 
 export default {
   data: new SlashCommandBuilder()
@@ -24,8 +26,8 @@ export default {
 
     const action = interaction.options.getString('action');
     const everyone = interaction.guild.roles.everyone;
-
     const allChannels = interaction.guild.channels.cache;
+
     const textAndVoiceChannels = allChannels.filter(
       c => c.type === ChannelType.GuildText || c.type === ChannelType.GuildVoice
     );
@@ -48,6 +50,7 @@ export default {
       }
     }
 
+    // If locking, disconnect voice users
     if (action === 'lock') {
       const voiceChannels = allChannels.filter(c => c.type === ChannelType.GuildVoice);
       for (const vc of voiceChannels.values()) {
@@ -61,6 +64,7 @@ export default {
       }
     }
 
+    // 📢 Public announcement
     const announceChannel = interaction.guild.channels.cache.get(ANNOUNCE_CHANNEL_ID);
     if (announceChannel?.isTextBased()) {
       const msg =
@@ -71,6 +75,14 @@ export default {
       await announceChannel.send({ content: msg, allowedMentions: { parse: ['everyone'] } });
     }
 
+    // 🧾 Log lockdown action
+    await logModEvent(interaction.guild, 'modAction', {
+      action: action === 'lock' ? 'Lockdown Initiated' : 'Lockdown Lifted',
+      moderator: interaction.user,
+      reason: `Affected ${count} channels`
+    });
+
+    // ✅ Response to command issuer
     await interaction.editReply(
       action === 'lock'
         ? `🚨 Lockdown initiated. 🔒 Locked ${count} channels and disconnected all voice users.`

@@ -2,6 +2,7 @@ import {
   SlashCommandBuilder,
   PermissionFlagsBits
 } from 'discord.js';
+import { logModEvent } from '../../utils/logModEvent.js';
 
 export default {
   data: new SlashCommandBuilder()
@@ -37,6 +38,13 @@ export default {
 
     await interaction.reply({
       content: `🔨 <@${target.id}> has been banned.\n📝 Reason: ${reason}`
+    });
+
+    await logModEvent(interaction.guild, 'modAction', {
+      action: 'Ban',
+      target,
+      moderator: interaction.user,
+      reason
     });
   }
 };

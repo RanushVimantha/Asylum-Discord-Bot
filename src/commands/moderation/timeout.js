@@ -2,6 +2,7 @@ import {
   SlashCommandBuilder,
   PermissionFlagsBits
 } from 'discord.js';
+import { logModEvent } from '../../utils/logModEvent.js';
 
 const timeUnits = {
   s: 1000,
@@ -14,13 +15,13 @@ function parseDuration(input) {
   const match = /^(\d+)(s|m|h|d)$/.exec(input);
   if (!match) return null;
 
-  const [ , num, unit ] = match;
+  const [, num, unit] = match;
   return parseInt(num) * timeUnits[unit];
 }
 
 export default {
   data: new SlashCommandBuilder()
-    .setName('timeout') // ⬅️ renamed
+    .setName('timeout')
     .setDescription('Temporarily time out a member (mute + block)')
     .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addUserOption(option =>
@@ -70,6 +71,15 @@ export default {
       await member.timeout(durationMs, reason);
       await interaction.reply({
         content: `🔇 <@${member.id}> has been timed out for **${durationStr}**.\n📝 Reason: ${reason}`
+      });
+
+      // ✅ Log moderation action
+      await logModEvent(interaction.guild, 'modAction', {
+        action: 'Timeout',
+        target: targetUser,
+        moderator: interaction.user,
+        reason,
+        duration: durationStr
       });
     } catch (err) {
       console.error('Timeout error:', err);

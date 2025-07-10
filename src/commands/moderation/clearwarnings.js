@@ -1,5 +1,6 @@
 import { SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import Warning from '../../models/warnSchema.js';
+import { logModEvent } from '../../utils/logModEvent.js';
 
 export default {
   data: new SlashCommandBuilder()
@@ -26,6 +27,13 @@ export default {
 
     await interaction.reply({
       content: `🧹 Cleared all warnings for <@${target.id}>.`
+    });
+
+    await logModEvent(interaction.guild, 'modAction', {
+      action: 'Clear Warnings',
+      target,
+      moderator: interaction.user,
+      reason: 'Manual clearance of all warnings'
     });
   }
 };
