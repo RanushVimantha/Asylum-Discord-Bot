@@ -15,7 +15,7 @@ export default {
     ),
 
   async execute(interaction) {
-    const MOD_ROLE_ID = '139000000000000000'; // 🔧 Replace with your moderator role ID
+    const MOD_ROLE_ID = '1392824426357067806'; // 🔧 Replace with your moderator role ID
     const ANNOUNCE_CHANNEL_ID = '1392030027582799872'; // 🔧 Your #announcement channel ID
 
     if (!interaction.member.roles.cache.has(MOD_ROLE_ID)) {
