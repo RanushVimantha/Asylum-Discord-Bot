@@ -1,11 +1,11 @@
 import { EmbedBuilder } from 'discord.js';
+import { logModEvent } from '../utils/logModEvent.js';
 
 export default {
   name: 'guildMemberAdd',
   once: false,
 
   async execute(member) {
-    // ✅ Debug log to detect duplicate triggers
     console.log(`[EVENT] guildMemberAdd triggered for ${member.user.tag} (${member.id})`);
 
     const welcomeChannelId = '1391992990863593524';
@@ -54,5 +54,8 @@ export default {
       .setTimestamp();
 
     await channel.send({ embeds: [embed] });
+
+    // ✅ Log to Mod System
+    await logModEvent(member.guild, 'memberJoin', { user: member.user });
   }
 };

@@ -1,16 +1,14 @@
 import { EmbedBuilder } from 'discord.js';
+import { logModEvent } from '../utils/logModEvent.js';
 
 export default {
   name: 'guildMemberRemove',
   once: false,
 
   async execute(member) {
-    const goodbyeChannelId = '1392023742175248482'; // ✅ Your actual leave channel ID
+    const goodbyeChannelId = '1392023742175248482';
     const channel = member.guild.channels.cache.get(goodbyeChannelId);
     if (!channel) return;
-
-    // Optional: Debug log
-    console.log(`[EVENT] guildMemberRemove triggered for ${member.user.tag} (${member.id})`);
 
     const embed = new EmbedBuilder()
       .setColor(0x910000)
@@ -43,5 +41,8 @@ export default {
       .setTimestamp();
 
     await channel.send({ embeds: [embed] });
+
+    // ✅ Log to Mod System
+    await logModEvent(member.guild, 'memberLeave', { user: member.user });
   }
 };
