@@ -6,7 +6,7 @@ export default {
     .setDescription('Lock or unlock ALL text and voice channels for @everyone')
     .addStringOption(option =>
       option.setName('action')
-        .setDescription('Choose to lock or unlock all channels')
+        .setDescription('Choose to lock or unlock')
         .setRequired(true)
         .addChoices(
           { name: 'lock', value: 'lock' },
@@ -27,7 +27,10 @@ export default {
       c.type === ChannelType.GuildText || c.type === ChannelType.GuildVoice
     );
 
-    let changed = 0;
+    let count = 0;
+
+    // ✅ Defer the reply to prevent Unknown Interaction error
+    await interaction.deferReply({ ephemeral: true });
 
     for (const channel of channels.values()) {
       try {
@@ -37,16 +40,16 @@ export default {
             : { SendMessages: action === 'lock' ? false : null };
 
         await channel.permissionOverwrites.edit(everyone, perms);
-        changed++;
+        count++;
       } catch (err) {
-        console.warn(`⚠️ Could not modify ${channel.name}`);
+        console.warn(`⚠️ Could not modify permissions for ${channel.name}`);
       }
     }
 
-    await interaction.reply(
+    await interaction.editReply(
       action === 'lock'
-        ? `🚨 Server-wide lockdown initiated.\n🔒 Locked ${changed} channels (text & voice).`
-        : `✅ Lockdown lifted.\n🔓 Unlocked ${changed} channels (text & voice).`
+        ? `🚨 Server-wide lockdown initiated.\n🔒 Locked ${count} channels (text + voice).`
+        : `✅ Lockdown lifted.\n🔓 Unlocked ${count} channels (text + voice).`
     );
   }
 };
