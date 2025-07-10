@@ -6,7 +6,7 @@ export default {
     // Ignore bot messages
     if (message.author.bot) return;
 
-    const linksChannelId = 'YOUR_LINKS_CHANNEL_ID'; // 🔁 Replace this
+    const linksChannelId = '1391860100662300803'; // 🔁 Replace this
     const channelId = message.channel.id;
     const content = message.content.toLowerCase();
 
