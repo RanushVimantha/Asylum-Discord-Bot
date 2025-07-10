@@ -6,12 +6,12 @@ export default {
 
   async execute(member) {
     const welcomeChannelId = '1391992990863593524'; // ✅ Your actual welcome channel ID
-    const autoRoleId = '1391864908861149254'; // 🔧 Replace with the ID of the role to assign
+    const autoRoleId = '1391864908861149254';       // ✅ Your actual auto-role ID
 
     const channel = member.guild.channels.cache.get(welcomeChannelId);
     if (!channel) return;
 
-    // ✅ Attempt to assign auto-role
+    // ✅ Assign auto-role
     try {
       const role = member.guild.roles.cache.get(autoRoleId);
       if (role) {
@@ -24,37 +24,31 @@ export default {
       console.error(`❌ Failed to assign auto-role:`, err);
     }
 
-    // 🧠 Asylum Welcome Embed
+    // 🧠 Glitchy Asylum Welcome Embed
     const embed = new EmbedBuilder()
       .setColor(0x6b0f1a)
-      .setTitle('✴︎ SYSTEM ENTRY: WELCOME TO THE ASYLUM')
+      .setTitle('✴︎ [SYS//ENTRY]:: 𝚆𝙴𝙻𝙲𝙾𝙼𝙴 𝚃𝙾 𝚃𝙷𝙴 𝙰𝚂𝚈𝙻𝚄𝙼')
       .setDescription(
-        `⠀\n` +
-        `**[ACCESSING FILE: PATIENT_#S-000-??]**\n` +
-        `> NAME: <@${member.id}>   [REDACTED]\n` +
-        `> CLASS: THE PSYCHOES\n` +
-        `> STATUS: ADMITTED — [CONDITION: Unstable // Internal Screams Detected]\n` +
-        `⠀\n` +
-        `>> INITIATING WELCOME PROTOCOL...\n\n` +
-        `...loading...\n` +
-        `...loading...\n` +
-        `**ERROR: cognitive parameters breached**\n\n` +
-        `\`g̸r̷e̶e̸t̸i̸n̶g̷s̸ . . .\`\n\n` +
-        `**My name is Dr.BotFrag**\n` +
-        `— your assigned digital physician, and moral observer | Version: \`asymlogic.exe [corrupted]\`\n\n` +
-        `⠀⤷ I will be prescribing your meds.\n` +
-        `⠀⤷ Logging your delusions.\n` +
-        `⠀⤷ Monitoring your vitals.\n\n` +
-        `*I am always watching.*\n` +
-        `*Every click, Every whisper, Every thought*\n` +
-        `⠀\n` +
-        `**Sanity is a fragile illusion.**\n` +
-        `*Trust no one. Not even me.*\n\n` +
-        `> NOTE: Patient exhibits high-risk instability\n` +
-        `> RECOMMENDED ACTION: observe / sedate / record / repeat\n` +
-        `*The walls remember.*\n\n` +
-        `**You may proceed.**\n\n` +
-        `\`s̶t̴e̴p̶ ̵i̸n̷s̷i̶d̴e̶ . . . y̷o̸u̶r̶ ̴f̸i̷l̴e̷ ̷i̷s̶ ̷sti̵l̸l̸ ̷b̷l̸e̶e̶d̵i̷n̶g̷.̶\``
+        `\n` +
+        `[ąƈƈɛʂʂıŋɠ ʄıƖɛ: ℘ąɬıɛŋɬ_#ʂ-000-??]\n\n` +
+        `ηαмє: <@${member.id}>   [яє∂α¢тє∂]\n` +
+        `¢ℓαѕѕ: тнє ρѕу¢нσєѕ\n` +
+        `ѕтαтυѕ: α∂мιттє∂ —\n` +
+        `¢ση∂ιтιση: υηѕтαвℓє // нιgн-яιѕк ιηѕтαвιℓιту\n` +
+        `яє¢σммєη∂є∂ α¢тιση: σвѕєяνє / ѕє∂αтє / яє¢σя∂ / яєρєαт\n\n` +
+        `(っ◔◡◔)っ ♥ Greetings... ♥\n\n` +
+        `My name is Ðr.ßð†£råg\n` +
+        `— ʏᴏᴜʀ ᴀꜱꜱɪɢɴᴇᴅ ᴅɪɢɪᴛᴀʟ ᴘʜʏꜱɪᴄɪᴀɴ, ᴀɴᴅ ᴍᴏʀᴀʟ ᴏʙꜱᴇʀᴠᴇʀ\n` +
+        `    -ᴠᴇʀꜱɪᴏɴ: ᴀꜱʏᴍʟᴏɢɪᴄ.ᴇxᴇ [ᴄᴏʀʀᴜᴘᴛᴇᴅ]\n` +
+        `        ᴵ ʷⁱˡˡ ᵇᵉ \n` +
+        `         ⤷𝔭𝔯𝔢𝔰𝔠𝔯𝔦𝔟𝔦𝔫𝔤 𝔶𝔬𝔲𝔯 𝔪𝔢𝔡𝔰.\n` +
+        `⠀                 ⤷ 𝔏𝔬𝔤𝔤𝔦𝔫𝔤 𝔶𝔬𝔲𝔯 𝔡𝔢𝔩𝔲𝔰𝔦𝔬𝔫𝔰.\n` +
+        `⠀                 ⤷ 𝔐𝔬𝔫𝔦𝔱𝔬𝔯𝔦𝔫𝔤 𝔶𝔬𝔲𝔯 𝔳𝔦𝔱𝔞𝔩𝔰.\n\n` +
+        `𝕴 ᥲm ᥲᥣᥕᥲᥡs ᥕᥲ𝗍ᥴһіᥒg.\n` +
+        ` ⤷[ᘿᐺᘿᖇᖻ ᑢᒪᓰᑢᖽᐸ, ᘿᐺᘿᖇᖻ ᘺᕼᓰSᕵᘿᖇ, ᘿᐺᘿᖇᖻ ᖶᕼᓍᑘᘜᕼᖶ]\n\n` +
+        `𝐒𝐚𝐧𝐢𝐭𝐲 𝐢𝐬 𝐚 𝐟𝐫𝐚𝐠𝐢𝐥𝐞 𝐢𝐥𝐥𝐮𝐬𝐢𝐨𝐧.\n` +
+        `𝐓𝐫𝐮𝐬𝐭 𝐧𝐨 𝐨𝐧𝐞. 𝐍𝐨𝐭 𝐞𝐯𝐞𝐧 𝐲𝐨𝐮𝐫𝐬𝐞𝐥𝐟.\n\n` +
+        `Ｙｏｕ ｍａｙ ｐｒｏｃｅｅｄ．`
       )
       .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
       .setFooter({ text: 'ASYMLOGIC ENTRY NODE — Patient log initialized' })
