@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
-import Warning from '../models/warnSchema.js';
-import { logModEvent } from '../utils/logModEvent.js';
+import Warning from '../../models/warnSchema.js';
+import { logModEvent } from '#utils/logModEvent.js';
 
 export default {
   data: new SlashCommandBuilder()
